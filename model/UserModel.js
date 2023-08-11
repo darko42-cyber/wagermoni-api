@@ -6,10 +6,12 @@ const userSchema = new mongoose.Schema({
     required: [true, "Name must be more than 4 charaters"],
     minlenth: 5,
   },
+
   email: {
     type: String,
     required: true,
   },
+  role: { type: String, default: "user" },
   password: {
     type: String,
     required: [true, "Name must be more than 7 charaters"],

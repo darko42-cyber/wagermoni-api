@@ -9,19 +9,20 @@ exports.register = async (req, res) => {
     if (user) {
       throw new Error("User account already exists");
     }
-
-    // let fileName;
-
-    // if (avatar) {
-    //   fileName = `http://localhost:5000/uploads/${req.file.filename}`;
-    // }
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     password = hashedPassword;
-    user = await User.create({ name, email, password });
+    user = await User.create(req.body);
     await user.save();
-    res.send({ success: true, data: user });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SEC, {
+      expiresIn: "2h",
+    });
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expiresIn: Date.now() + 60 * 60 * 1000,
+      })
+      .send({ success: true, data: user });
   } catch (error) {
     res.send({ success: false, message: error.message });
   }
@@ -45,13 +46,19 @@ exports.login = async (req, res) => {
       throw new Error("Invalid password");
     }
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SEC, {
-      expiresIn: "2h",
+      expiresIn: "10m",
     });
-    res.status(200).send({
-      success: true,
-      message: "User logged in successful",
-      data: token,
-    });
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expiresIn: new Date(Date.now() * 60 * 60 * 1000),
+      })
+      .status(200)
+      .send({
+        success: true,
+        message: "User logged in successful",
+        data: user,
+      });
   } catch (error) {
     res.send({ success: false, message: error.message });
   }
