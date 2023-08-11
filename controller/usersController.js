@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     password = hashedPassword;
-    user = await User.create(req.body);
+    user = await User.create({ ...req.body, password });
     await user.save();
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SEC, {
       expiresIn: "2h",
@@ -70,6 +70,14 @@ exports.loadUser = async (req, res) => {
     if (!user)
       return res.send({ success: false, message: "User not logged in" });
     res.send({ success: true, data: user });
+  } catch (error) {
+    res.send({ success: false, message: error.message });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    res.cookie("access_token", null);
   } catch (error) {
     res.send({ success: false, message: error.message });
   }
