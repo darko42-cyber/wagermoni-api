@@ -4,9 +4,7 @@ const cookieParse = require("cookie-parser");
 const app = express();
 
 app.use(express.json());
-app.use(
-  cors({ origin: "https://wagermoni-ap.onrender.com", credentials: true })
-);
+app.use(cors({ origin: "https://wagermoni.onrender.com", credentials: true }));
 app.use(cookieParse());
 require("dotenv").config();
 
