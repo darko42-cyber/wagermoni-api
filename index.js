@@ -15,7 +15,7 @@ const commentsRoute = require("./routes/comments");
 const likesRoute = require("./routes/likes");
 const oddsEventRoute = require("./routes/oddsEvent");
 const dbConfig = require("./utils/db");
-await dbConfig();
+dbConfig();
 
 // app.use("/api/users", usersRoute);
 app.use("/api/predictions", predictionsRoute);
