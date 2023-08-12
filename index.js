@@ -24,6 +24,5 @@ app.use("/api/likes", likesRoute);
 app.use("/api/events", oddsEventRoute);
 
 app.listen(process.env.PORT, (res) => {
-  dbConfig();
   console.log("Server is listening on port 5000");
 });
